@@ -1,0 +1,4 @@
+<deploy>
+  <files><path>~/FileCabinet/SuiteScripts/netsuite-agent/*</path></files>
+  <objects><path>~/Objects/*</path></objects>
+</deploy>

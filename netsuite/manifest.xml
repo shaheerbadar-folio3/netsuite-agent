@@ -1,0 +1,8 @@
+<manifest projecttype="ACCOUNTCUSTOMIZATION">
+  <projectname>NetSuite Local Agent</projectname>
+  <frameworkversion>1.0</frameworkversion>
+  <dependencies><features>
+    <feature required="true">CUSTOMRECORDS</feature>
+    <feature required="true">SERVERSIDESCRIPTING</feature>
+  </features></dependencies>
+</manifest>

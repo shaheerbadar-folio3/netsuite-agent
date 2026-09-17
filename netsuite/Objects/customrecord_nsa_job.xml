@@ -1,0 +1,23 @@
+<customrecordtype scriptid="customrecord_nsa_job">
+  <recordname>NetSuite Agent Job</recordname>
+  <includename>T</includename>
+  <accesstype>USEPERMISSIONLIST</accesstype>
+  <allowuiaccess>F</allowuiaccess>
+  <enableoptimisticlocking>T</enableoptimisticlocking>
+  <permissions>
+    <permission>
+      <permittedrole>ADMINISTRATOR</permittedrole>
+      <permittedlevel>FULL</permittedlevel>
+    </permission>
+  </permissions>
+  <customrecordcustomfields>
+    <customrecordcustomfield scriptid="custrecord_nsa_state"><label>State</label><fieldtype>TEXT</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_nsa_owner"><label>Requesting user ID</label><fieldtype>INTEGER</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_nsa_request"><label>Request JSON</label><fieldtype>CLOBTEXT</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_nsa_result"><label>Result JSON</label><fieldtype>CLOBTEXT</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_nsa_lease"><label>Lease token</label><fieldtype>TEXT</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_nsa_until"><label>Lease expiry milliseconds</label><fieldtype>FLOAT</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_nsa_created"><label>Created milliseconds</label><fieldtype>FLOAT</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+    <customrecordcustomfield scriptid="custrecord_nsa_worker"><label>Worker name</label><fieldtype>TEXT</fieldtype><storevalue>T</storevalue></customrecordcustomfield>
+  </customrecordcustomfields>
+</customrecordtype>

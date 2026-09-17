@@ -1,0 +1,5 @@
+<suitelet scriptid="customscript_nsa_chat">
+  <name>NetSuite Agent Chat</name>
+  <scriptfile>[/SuiteScripts/netsuite-agent/suitelet.js]</scriptfile>
+  <notifyowner>F</notifyowner>
+</suitelet>

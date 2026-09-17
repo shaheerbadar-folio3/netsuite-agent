@@ -1,0 +1,8 @@
+<scheduledscript scriptid="customscript_nsa_cleanup">
+  <name>NetSuite Agent Retention</name>
+  <scriptfile>[/SuiteScripts/netsuite-agent/cleanup.js]</scriptfile>
+  <notifyowner>F</notifyowner>
+  <scriptcustomfields>
+    <scriptcustomfield scriptid="custscript_nsa_retention_days"><label>Retention days</label><fieldtype>INTEGER</fieldtype></scriptcustomfield>
+  </scriptcustomfields>
+</scheduledscript>

@@ -1,0 +1,282 @@
+!DEPLOY - 20260914011536 -----------------------------------------------
+DEPLOY SUMMARY
+Status: FAILED
+Steps: 26/28 successful
+Validation Results: 0 error(s), 0 warning(s)
+SDF Errors: present
+Timestamp: Sep 14, 2026, 1:15:36 PM GMT+5
+Account: Air Cool solutions
+Account ID: TSTDRV2044449
+Role: Administrator
+Project Name: NetSuite Local Agent
+------------------------------------------------------------
+✔ Step 1: PROJECT_VALIDATION
+✔ Step 2: MANIFEST_VALIDATION
+✔ Step 3: DEPLOY_FILE_VALIDATION
+✔ Step 4: CONFIGURATION_VALIDATION
+✔ Step 5: CUSTOM_OBJECT_VALIDATION
+✔ Step 6: CUSTOM_OBJECT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 7: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 8: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 9: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 10: FILE_VALIDATION
+✔ Step 11: FOLDER_VALIDATION
+✔ Step 12: TRANSLATION_IMPORT_VALIDATION
+✔ Step 13: TRANSLATION_REFERENCE_VALIDATION
+✔ Step 14: PREFERENCE_VALIDATION
+✔ Step 15: FLAG_VALIDATION
+✔ Step 16: ACP_SPECIFIC_VALIDATION
+✔ Step 17: PROJECT_ACCOUNT_VALIDATION
+✔ Step 18: ACCOUNT_SETTINGS_VALIDATION
+✔ Step 19: CUSTOM_OBJECT_ACCOUNT_VALIDATION
+✔ Step 20: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 21: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 22: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 23: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_worker (restlet)
+✖ Step 24: BEGIN_DEPLOYMENT --- NetSuite Local Agent
+✔ Step 25: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job (customrecordtype)
+✖ Step 26: CUSTOM_OBJECT_CREATION --- customscript_nsa_chat (suitelet)
+✔ Step 27: FILE_UPLOAD --- ~/Objects/customrecord_nsa_job.xml
+✔ Step 28: CIRCULAR_DEPENDENCY_VALIDATION
+ERROR: An error occurred during custom object creation.
+Details: Fail to evaluate script: {"type":"error.SuiteScriptModuleLoaderError","name":"FAILED_TO_VALIDATE_SCRIPT_FILE","message":"Failed to validate script file: Invalid JSDoc tag value; valid values are: @NApiVersion [2.X, 2.x, 2.0, 2.1]","stack":[]}
+File: ~/Objects/customscript_nsa_chat.xml
+Object: customscript_nsa_chat (suitelet)
+
+
+!DEPLOY - 20260914011647 -----------------------------------------------
+DEPLOY SUMMARY
+Status: SUCCESS
+Steps: 45/45 successful
+Validation Results: 0 error(s), 0 warning(s)
+SDF Errors: none
+Timestamp: Sep 14, 2026, 1:16:47 PM GMT+5
+Account: Air Cool solutions
+Account ID: TSTDRV2044449
+Role: Administrator
+Project Name: NetSuite Local Agent
+------------------------------------------------------------
+✔ Step 1: PROJECT_VALIDATION
+✔ Step 2: MANIFEST_VALIDATION
+✔ Step 3: DEPLOY_FILE_VALIDATION
+✔ Step 4: CONFIGURATION_VALIDATION
+✔ Step 5: CUSTOM_OBJECT_VALIDATION
+✔ Step 6: CUSTOM_OBJECT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 7: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 8: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 9: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 10: FILE_VALIDATION
+✔ Step 11: FOLDER_VALIDATION
+✔ Step 12: TRANSLATION_IMPORT_VALIDATION
+✔ Step 13: TRANSLATION_REFERENCE_VALIDATION
+✔ Step 14: PREFERENCE_VALIDATION
+✔ Step 15: FLAG_VALIDATION
+✔ Step 16: ACP_SPECIFIC_VALIDATION
+✔ Step 17: PROJECT_ACCOUNT_VALIDATION
+✔ Step 18: ACCOUNT_SETTINGS_VALIDATION
+✔ Step 19: CUSTOM_OBJECT_ACCOUNT_VALIDATION
+✔ Step 20: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 21: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 22: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 23: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 24: BEGIN_DEPLOYMENT --- NetSuite Local Agent
+✔ Step 25: FILE_UPLOAD --- ~/FileCabinet/SuiteScripts/netsuite-agent/lib.js
+✔ Step 26: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job (customrecordtype)
+✔ Step 27: CUSTOM_OBJECT_CREATION --- customscript_nsa_chat (suitelet)
+✔ Step 28: CUSTOM_OBJECT_CREATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 29: CUSTOM_OBJECT_CREATION --- customscript_nsa_worker (restlet)
+✔ Step 30: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_state (customrecordcustomfield)
+✔ Step 31: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_owner (customrecordcustomfield)
+✔ Step 32: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_request (customrecordcustomfield)
+✔ Step 33: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_result (customrecordcustomfield)
+✔ Step 34: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_lease (customrecordcustomfield)
+✔ Step 35: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_until (customrecordcustomfield)
+✔ Step 36: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_created (customrecordcustomfield)
+✔ Step 37: CUSTOM_OBJECT_CREATION --- customrecord_nsa_job.custrecord_nsa_worker (customrecordcustomfield)
+✔ Step 38: CUSTOM_OBJECT_CREATION --- customscript_nsa_cleanup.custscript_nsa_retention_days (scriptcustomfield)
+✔ Step 39: CUSTOM_OBJECT_CREATION --- customscript_nsa_worker.custscript_nsa_worker_role (scriptcustomfield)
+✔ Step 40: CUSTOM_OBJECT_CREATION --- customscript_nsa_worker.custscript_nsa_worker_user (scriptcustomfield)
+✔ Step 41: CUSTOM_OBJECT_CREATION --- customscript_nsa_worker.custscript_nsa_worker_name (scriptcustomfield)
+✔ Step 42: FILE_UPLOAD --- ~/Objects/customrecord_nsa_job.xml
+✔ Step 43: FILE_UPLOAD --- ~/Objects/customscript_nsa_chat.xml
+✔ Step 44: FILE_UPLOAD --- ~/Objects/customscript_nsa_cleanup.xml
+✔ Step 45: FILE_UPLOAD --- ~/Objects/customscript_nsa_worker.xml
+
+
+!DEPLOY - 20260914032253 -----------------------------------------------
+DEPLOY SUMMARY
+Status: SUCCESS
+Steps: 45/45 successful
+Validation Results: 0 error(s), 0 warning(s)
+SDF Errors: none
+Timestamp: Sep 14, 2026, 3:22:52 PM GMT+5
+Account: Air Cool solutions
+Account ID: TSTDRV2044449
+Role: Administrator
+Project Name: NetSuite Local Agent
+------------------------------------------------------------
+✔ Step 1: PROJECT_VALIDATION
+✔ Step 2: MANIFEST_VALIDATION
+✔ Step 3: DEPLOY_FILE_VALIDATION
+✔ Step 4: CONFIGURATION_VALIDATION
+✔ Step 5: CUSTOM_OBJECT_VALIDATION
+✔ Step 6: CUSTOM_OBJECT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 7: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 8: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 9: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 10: FILE_VALIDATION
+✔ Step 11: FOLDER_VALIDATION
+✔ Step 12: TRANSLATION_IMPORT_VALIDATION
+✔ Step 13: TRANSLATION_REFERENCE_VALIDATION
+✔ Step 14: PREFERENCE_VALIDATION
+✔ Step 15: FLAG_VALIDATION
+✔ Step 16: ACP_SPECIFIC_VALIDATION
+✔ Step 17: PROJECT_ACCOUNT_VALIDATION
+✔ Step 18: ACCOUNT_SETTINGS_VALIDATION
+✔ Step 19: CUSTOM_OBJECT_ACCOUNT_VALIDATION
+✔ Step 20: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 21: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 22: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 23: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 24: BEGIN_DEPLOYMENT --- NetSuite Local Agent
+✔ Step 25: FILE_UPLOAD --- ~/FileCabinet/SuiteScripts/netsuite-agent/worker_restlet.js
+✔ Step 26: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job (customrecordtype)
+✔ Step 27: CUSTOM_OBJECT_UPDATE --- customscript_nsa_chat (suitelet)
+✔ Step 28: CUSTOM_OBJECT_UPDATE --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 29: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker (restlet)
+✔ Step 30: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_state (customrecordcustomfield)
+✔ Step 31: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_owner (customrecordcustomfield)
+✔ Step 32: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_request (customrecordcustomfield)
+✔ Step 33: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_result (customrecordcustomfield)
+✔ Step 34: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_lease (customrecordcustomfield)
+✔ Step 35: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_until (customrecordcustomfield)
+✔ Step 36: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_created (customrecordcustomfield)
+✔ Step 37: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_worker (customrecordcustomfield)
+✔ Step 38: CUSTOM_OBJECT_UPDATE --- customscript_nsa_cleanup.custscript_nsa_retention_days (scriptcustomfield)
+✔ Step 39: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_role (scriptcustomfield)
+✔ Step 40: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_user (scriptcustomfield)
+✔ Step 41: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_name (scriptcustomfield)
+✔ Step 42: FILE_UPLOAD --- ~/Objects/customrecord_nsa_job.xml
+✔ Step 43: FILE_UPLOAD --- ~/Objects/customscript_nsa_chat.xml
+✔ Step 44: FILE_UPLOAD --- ~/Objects/customscript_nsa_cleanup.xml
+✔ Step 45: FILE_UPLOAD --- ~/Objects/customscript_nsa_worker.xml
+
+
+!DEPLOY - 20260914033740 -----------------------------------------------
+DEPLOY SUMMARY
+Status: SUCCESS
+Steps: 45/45 successful
+Validation Results: 0 error(s), 0 warning(s)
+SDF Errors: none
+Timestamp: Sep 14, 2026, 3:37:40 PM GMT+5
+Account: Air Cool solutions
+Account ID: TSTDRV2044449
+Role: Administrator
+Project Name: NetSuite Local Agent
+------------------------------------------------------------
+✔ Step 1: PROJECT_VALIDATION
+✔ Step 2: MANIFEST_VALIDATION
+✔ Step 3: DEPLOY_FILE_VALIDATION
+✔ Step 4: CONFIGURATION_VALIDATION
+✔ Step 5: CUSTOM_OBJECT_VALIDATION
+✔ Step 6: CUSTOM_OBJECT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 7: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 8: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 9: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 10: FILE_VALIDATION
+✔ Step 11: FOLDER_VALIDATION
+✔ Step 12: TRANSLATION_IMPORT_VALIDATION
+✔ Step 13: TRANSLATION_REFERENCE_VALIDATION
+✔ Step 14: PREFERENCE_VALIDATION
+✔ Step 15: FLAG_VALIDATION
+✔ Step 16: ACP_SPECIFIC_VALIDATION
+✔ Step 17: PROJECT_ACCOUNT_VALIDATION
+✔ Step 18: ACCOUNT_SETTINGS_VALIDATION
+✔ Step 19: CUSTOM_OBJECT_ACCOUNT_VALIDATION
+✔ Step 20: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 21: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 22: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 23: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 24: BEGIN_DEPLOYMENT --- NetSuite Local Agent
+✔ Step 25: FILE_UPLOAD --- ~/FileCabinet/SuiteScripts/netsuite-agent/worker_restlet.js
+✔ Step 26: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job (customrecordtype)
+✔ Step 27: CUSTOM_OBJECT_UPDATE --- customscript_nsa_chat (suitelet)
+✔ Step 28: CUSTOM_OBJECT_UPDATE --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 29: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker (restlet)
+✔ Step 30: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_state (customrecordcustomfield)
+✔ Step 31: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_owner (customrecordcustomfield)
+✔ Step 32: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_request (customrecordcustomfield)
+✔ Step 33: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_result (customrecordcustomfield)
+✔ Step 34: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_lease (customrecordcustomfield)
+✔ Step 35: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_until (customrecordcustomfield)
+✔ Step 36: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_created (customrecordcustomfield)
+✔ Step 37: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_worker (customrecordcustomfield)
+✔ Step 38: CUSTOM_OBJECT_UPDATE --- customscript_nsa_cleanup.custscript_nsa_retention_days (scriptcustomfield)
+✔ Step 39: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_role (scriptcustomfield)
+✔ Step 40: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_user (scriptcustomfield)
+✔ Step 41: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_name (scriptcustomfield)
+✔ Step 42: FILE_UPLOAD --- ~/Objects/customrecord_nsa_job.xml
+✔ Step 43: FILE_UPLOAD --- ~/Objects/customscript_nsa_chat.xml
+✔ Step 44: FILE_UPLOAD --- ~/Objects/customscript_nsa_cleanup.xml
+✔ Step 45: FILE_UPLOAD --- ~/Objects/customscript_nsa_worker.xml
+
+
+!DEPLOY - 20260914034507 -----------------------------------------------
+DEPLOY SUMMARY
+Status: SUCCESS
+Steps: 45/45 successful
+Validation Results: 0 error(s), 0 warning(s)
+SDF Errors: none
+Timestamp: Sep 14, 2026, 3:45:06 PM GMT+5
+Account: Air Cool solutions
+Account ID: TSTDRV2044449
+Role: Administrator
+Project Name: NetSuite Local Agent
+------------------------------------------------------------
+✔ Step 1: PROJECT_VALIDATION
+✔ Step 2: MANIFEST_VALIDATION
+✔ Step 3: DEPLOY_FILE_VALIDATION
+✔ Step 4: CONFIGURATION_VALIDATION
+✔ Step 5: CUSTOM_OBJECT_VALIDATION
+✔ Step 6: CUSTOM_OBJECT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 7: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 8: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 9: CUSTOM_OBJECT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 10: FILE_VALIDATION
+✔ Step 11: FOLDER_VALIDATION
+✔ Step 12: TRANSLATION_IMPORT_VALIDATION
+✔ Step 13: TRANSLATION_REFERENCE_VALIDATION
+✔ Step 14: PREFERENCE_VALIDATION
+✔ Step 15: FLAG_VALIDATION
+✔ Step 16: ACP_SPECIFIC_VALIDATION
+✔ Step 17: PROJECT_ACCOUNT_VALIDATION
+✔ Step 18: ACCOUNT_SETTINGS_VALIDATION
+✔ Step 19: CUSTOM_OBJECT_ACCOUNT_VALIDATION
+✔ Step 20: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customrecord_nsa_job (customrecordtype)
+✔ Step 21: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_chat (suitelet)
+✔ Step 22: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 23: CUSTOM_OBJECT_ACCOUNT_VALIDATION --- customscript_nsa_worker (restlet)
+✔ Step 24: BEGIN_DEPLOYMENT --- NetSuite Local Agent
+✔ Step 25: FILE_UPLOAD --- ~/FileCabinet/SuiteScripts/netsuite-agent/worker_restlet.js
+✔ Step 26: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job (customrecordtype)
+✔ Step 27: CUSTOM_OBJECT_UPDATE --- customscript_nsa_chat (suitelet)
+✔ Step 28: CUSTOM_OBJECT_UPDATE --- customscript_nsa_cleanup (scheduledscript)
+✔ Step 29: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker (restlet)
+✔ Step 30: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_state (customrecordcustomfield)
+✔ Step 31: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_owner (customrecordcustomfield)
+✔ Step 32: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_request (customrecordcustomfield)
+✔ Step 33: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_result (customrecordcustomfield)
+✔ Step 34: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_lease (customrecordcustomfield)
+✔ Step 35: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_until (customrecordcustomfield)
+✔ Step 36: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_created (customrecordcustomfield)
+✔ Step 37: CUSTOM_OBJECT_UPDATE --- customrecord_nsa_job.custrecord_nsa_worker (customrecordcustomfield)
+✔ Step 38: CUSTOM_OBJECT_UPDATE --- customscript_nsa_cleanup.custscript_nsa_retention_days (scriptcustomfield)
+✔ Step 39: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_role (scriptcustomfield)
+✔ Step 40: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_user (scriptcustomfield)
+✔ Step 41: CUSTOM_OBJECT_UPDATE --- customscript_nsa_worker.custscript_nsa_worker_name (scriptcustomfield)
+✔ Step 42: FILE_UPLOAD --- ~/Objects/customrecord_nsa_job.xml
+✔ Step 43: FILE_UPLOAD --- ~/Objects/customscript_nsa_chat.xml
+✔ Step 44: FILE_UPLOAD --- ~/Objects/customscript_nsa_cleanup.xml
+✔ Step 45: FILE_UPLOAD --- ~/Objects/customscript_nsa_worker.xml
+
+

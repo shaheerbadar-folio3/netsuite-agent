@@ -1,0 +1,5 @@
+Consumer Key/ Client ID
+9ad8e5b7056a2ce0621a604ab0fc55cfc28fc9127e45a0a97d08de16f78fe3b0
+
+Consumer Secret/ Client Secret
+19b7adde609dbc10398a29b6ed756edd08fe8d6353bd7853f53a1040f8064da3
