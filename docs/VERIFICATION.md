@@ -39,3 +39,9 @@ platform behavior or model correctness.
 
 Use SETUP.md followed by ACCEPTANCE.md. Account-specific failures require resolution before
 calling the deployment production-ready.
+
+## Approved creation update — 2026-09-22
+
+See [CREATION_VERIFICATION.md](CREATION_VERIFICATION.md) for current creation tests,
+Oracle server validation and local-model evidence. The historical outstanding checks above
+describe the original implementation, not the current creation verification status.

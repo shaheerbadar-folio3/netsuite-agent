@@ -1,33 +1,35 @@
 # NetSuite Local Agent
 
 Administrator-only analytics inside NetSuite, using a locally hosted model and live
-read-only SuiteQL. The application is implemented; connecting and accepting it against
+read-only SuiteQL, with optional approval-based record creation and SDF custom-type deployment. The application is implemented; connecting and accepting it against
 your sandbox requires the account-specific setup below.
 
 **Start here: [Setup and deployment](docs/SETUP.md).**
+
+**Creation setup: [Approved record and custom-type creation](docs/CREATION_SETUP.md).**
 
 ## What is included
 
 - NetSuite Suitelet chat with follow-ups, job progress, cancellation, result pagination,
   SQL/definition provenance, and links for directly selected IDs of supported record types.
+- Creation drafts, live reference resolution, explicit administrator approval, and durable execution receipts.
+- Isolated SDF projects for new custom record types, with validation and account verification before deployment.
 - Outbound local worker: your laptop does not need a public URL or an inbound tunnel.
 - OAuth 2.0 certificate authentication, automatic token renewal, and restricted integration identity.
 - Local Ollama planning with JSON schema output, bounded query repair, and no external AI fallback.
 - Business-document loading on every question, deterministic local retrieval, and content version hashes.
-- Automatic schema inventory/probes, periodic refresh, partial-coverage diagnostics, and stale-schema rejection.
+- Automatic schema inventory/probes, incremental refresh with a core-table allowlist, periodic full rescan, background refresh while serving the last good snapshot, partial-coverage diagnostics, and stale-schema rejection.
 - Oracle SQL AST validation, real NetSuite query execution, and explicit partial/error states.
 - SQLite completion journal, replay recovery, leases, cancellation, audit metadata, retention, and backup command.
 - SuiteCloud source package, Docker configuration, runbooks, and automated Python/SuiteScript tests.
 
 ## Current verification boundary
 
-The code has local automated tests using simulated NetSuite and model responses. There
-is **no connected sandbox in this repository's configuration**. Ollama 0.34.0 with
-`qwen3.5:4b` has now passed a live, synthetic planning benchmark with SQL validation
-(32.27 seconds, one attempt). This does not establish real NetSuite answer accuracy.
-Live OAuth, SuiteCloud validation, schema projection compatibility, query accuracy, and
-inference speed must be checked using [the acceptance checklist](docs/ACCEPTANCE.md).
-Local tests do not mean these account-specific checks have passed.
+The code has local automated tests using simulated NetSuite and model responses. Existing
+read-query flows have been exercised in the user's sandbox. The new creation flows require
+separate sandbox acceptance and write/SDF permissions; local tests do not establish that
+every account's record configuration, scripts or workflows are compatible. See
+[creation acceptance](docs/CREATION_SETUP.md) and [query acceptance](docs/ACCEPTANCE.md).
 
 Schema probing does not guarantee every NetSuite UI field is exposed to SuiteQL. It does
 not infer business joins or recover history that NetSuite does not expose. Those definitions
@@ -71,8 +73,8 @@ bash scripts/check.sh
 
 Questions and result pages are stored temporarily in dedicated NetSuite job records and
 the local completion journal. Business records are never modified by query execution.
-Creating/updating/deleting the agent's own queue records is a separate, narrowly scoped
-application function. SQLite and documents are not encrypted by this application: use
+Optional creation uses separate record APIs or SDF only after review and explicit approval.
+Creating/updating/deleting the agent's own queue records is a separate application function. SQLite and documents are not encrypted by this application: use
 filesystem permissions and full-disk encryption, and protect backups as business data.
 
 Models receive questions, selected schema, document excerpts, and query error messages.

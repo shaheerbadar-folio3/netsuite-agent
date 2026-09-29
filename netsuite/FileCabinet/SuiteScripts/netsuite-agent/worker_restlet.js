@@ -2,7 +2,8 @@
  * @NApiVersion 2.1
  * @NScriptType Restlet
  */
-define(['N/query', 'N/runtime', 'N/cache', 'N/url', './lib'], (query, runtime, cache, url, lib) => {
+define(['N/query', 'N/runtime', 'N/cache', 'N/url', 'N/search', './lib', './creation'],
+    (query, runtime, cache, url, search, lib, creation) => {
     const PAGE_SIZE = 100;
     function workerLock(worker) {
         const expected = String(lib.param('custscript_nsa_worker_name') || 'local-primary');
@@ -36,7 +37,8 @@ define(['N/query', 'N/runtime', 'N/cache', 'N/url', './lib'], (query, runtime, c
                     if (String(lib.get(previous, 'owner')) !== String(lib.get(r, 'owner'))) lib.fail('Invalid history owner');
                     const pr = lib.json(previous, 'request', {}), result = lib.json(previous, 'result', {});
                     if (request.kind === 'page' && i === 0) job.source_result = result;
-                    history.unshift({question: pr.question || '', interpretation: result.interpretation || result.message || ''});
+                    history.unshift({question: pr.question || '', interpretation: result.interpretation || result.message || '',
+                        ...(result.kind === 'draft' ? {draft: result.preview} : {})});
                     parent = pr.parent || pr.source;
                 } catch (e) { break; }
             }
@@ -116,7 +118,8 @@ define(['N/query', 'N/runtime', 'N/cache', 'N/url', './lib'], (query, runtime, c
         return {tables: [...new Set(names.map(n => n.toLowerCase()))].filter(n => !n.startsWith('customrecord_nsa_')).sort()};
     }
     function probe(body) {
-        if (!Array.isArray(body.tables) || body.tables.length > 6) lib.fail('Probe accepts at most six tables');
+        // Bounded batch size keeps RESTlet governance predictable while allowing faster discovery.
+        if (!Array.isArray(body.tables) || body.tables.length > 12) lib.fail('Probe accepts at most twelve tables');
         const tables = [], failures = [];
         for (const name of body.tables) {
             if (!lib.identifier(name) || name.startsWith('customrecord_nsa_')) lib.fail('Invalid table');
@@ -159,7 +162,30 @@ define(['N/query', 'N/runtime', 'N/cache', 'N/url', './lib'], (query, runtime, c
             lib.integration(); workerLock(body.worker);
             let value;
             switch (body.action) {
-                case 'ping': value = {service: 'netsuite-agent', version: '0.1.0', role: runtime.getCurrentUser().role}; break;
+                case 'ping': {
+                    const role = runtime.getCurrentUser().role;
+                    let role_script_id = '';
+                    try {
+                        const found = search.lookupFields({
+                            type: search.Type.ROLE, id: role, columns: ['scriptid']
+                        });
+                        const raw = found && found.scriptid;
+                        role_script_id = String(
+                            typeof raw === 'string' ? raw
+                                : (Array.isArray(raw) && raw[0] && (raw[0].value || raw[0].text)) || ''
+                        ).toLowerCase();
+                    } catch (e1) {
+                        try {
+                            const rows = query.runSuiteQL({
+                                query: 'SELECT scriptid FROM role WHERE id = ' + Number(role),
+                                metaDataProvider: 'SUITE_QL'
+                            }).asMappedResults();
+                            role_script_id = String(rows[0] && rows[0].scriptid || '').toLowerCase();
+                        } catch (e2) { /* Role script ID lookup is best-effort for SDF grants. */ }
+                    }
+                    value = {service: 'netsuite-agent', version: '0.1.0', role, role_script_id};
+                    break;
+                }
                 case 'claim': value = claim(body); break;
                 case 'heartbeat': {
                     const r = lib.held(body);
@@ -174,7 +200,7 @@ define(['N/query', 'N/runtime', 'N/cache', 'N/url', './lib'], (query, runtime, c
                     if (lib.get(r, 'state') === 'done') { value = {completed: true}; break; }
                     if (lib.get(r, 'state') !== 'running') lib.fail('Job is no longer running');
                     const result = JSON.stringify(body.result);
-                    if (!body.result || !['result', 'clarify', 'unsupported', 'error'].includes(body.result.kind) || result.length > 95000)
+                    if (!body.result || !['result', 'clarify', 'unsupported', 'error', 'draft', 'created', 'uncertain'].includes(body.result.kind) || result.length > 95000)
                         lib.fail('Invalid result');
                     lib.set(r, 'result', result); lib.set(r, 'state', 'done'); lib.save(r);
                     value = {completed: true}; break;
@@ -183,7 +209,9 @@ define(['N/query', 'N/runtime', 'N/cache', 'N/url', './lib'], (query, runtime, c
                 case 'query_diagnostics': value = queryDiagnostics(); break;
                 case 'schema_inventory': value = inventory(); break;
                 case 'schema_probe': value = probe(body); break;
-                default: lib.fail('Unknown action');
+                default:
+                    if (typeof body.action === 'string' && body.action.startsWith('creation_')) value = creation.handle(body);
+                    else lib.fail('Unknown action');
             }
             return {ok: true, ...value};
         } catch (e) {

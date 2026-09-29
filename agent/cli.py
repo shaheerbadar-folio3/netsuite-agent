@@ -32,6 +32,19 @@ async def doctor(s):
         report["ollama"] = {"ready": False, "error": type(exc).__name__}
     finally:
         await llm.close()
+    report["creation"] = {
+        "enabled": s.creation_enabled,
+        "sdf_enabled": s.sdf_enabled,
+        "sdf_auth_configured": bool(s.sdf_auth_id),
+        "sdf_auth_id": s.sdf_auth_id or None,
+        "suitecloud_bin": s.suitecloud_bin,
+    }
+    if s.creation_enabled and (not s.sdf_enabled or not s.sdf_auth_id):
+        from .creation_fields import sdf_configuration_message
+        report["creation"]["custom_types"] = "not ready"
+        report["creation"]["custom_types_help"] = sdf_configuration_message(s)
+    elif s.creation_enabled and s.sdf_enabled and s.sdf_auth_id:
+        report["creation"]["custom_types"] = "configured"
     print(json.dumps(report, indent=2))
 
 

@@ -3,6 +3,9 @@ import json
 import hashlib
 import re
 import time
+import logging
+import traceback
+from pathlib import Path
 from datetime import datetime, timezone
 
 from .knowledge import load_knowledge, select_schema
@@ -19,6 +22,14 @@ class Engine:
 
     async def answer(self, job):
         start = time.monotonic()
+        if job['request'].get('kind') == 'execute' or job['request'].get('mode') == 'create':
+            from .creation import CreationEngine
+            return await CreationEngine(self.settings, self.store, self.ns, self.llm).process(job)
+        # Obvious create prompts should not wait on the SuiteQL planner model first.
+        from .creation_fields import is_creation_request
+        if self.settings.creation_enabled and is_creation_request(job['request'].get('question', '')):
+            from .creation import CreationEngine
+            return await CreationEngine(self.settings, self.store, self.ns, self.llm).process(job)
         raw = self.store.get("schema")
         if not raw:
             raise ValueError("Schema not ready; wait for discovery or inspect schema status")
@@ -80,6 +91,9 @@ class Engine:
                 last_error = "Previous model output was invalid. Return only JSON matching the requested schema."
                 self.store.audit(job["id"], "model_output_retry")
                 continue
+            if plan.kind == "create":
+                from .creation import CreationEngine
+                return await CreationEngine(self.settings, self.store, self.ns, self.llm).process(job)
             if plan.kind != "query":
                 return {"kind": plan.kind, "message": plan.explanation, "document_version": knowledge["version"],
                         "schema_version": schema.version}
@@ -113,22 +127,31 @@ class Engine:
         raise ValueError("Could not produce a valid query after bounded retries. " + (last_error or ""))
 
     async def process(self, job):
-        cached = self.store.cached_result(job["id"])
+        # Approval requeues the same job, but its earlier draft must never mask execution.
+        cache_id = str(job['id']) + (':execute' if job['request'].get('kind') == 'execute' else '')
+        cached = self.store.cached_result(cache_id)
         if cached is not None:
             return cached
         self.store.audit(job["id"], "started")
         try:
             # Bounded even when an inference server never finishes generation.
-            async with asyncio.timeout(self.settings.inference_timeout * self.settings.max_attempts + 180):
+            async with asyncio.timeout(max(self.settings.inference_timeout, self.settings.creation_inference_timeout) * 5 + self.settings.sdf_timeout * 2 + 180):
                 result = await self.answer(job)
         except asyncio.CancelledError:
             raise
         except Exception as exc:
+            # Frame locations and exception class only: never log payloads,
+            # local variables, exception text, or HTTP credentials.
+            code = type(exc).__name__
+            frames = " -> ".join(f"{Path(frame.filename).name}:{frame.lineno} ({frame.name})"
+                                 for frame in traceback.extract_tb(exc.__traceback__))
+            logging.getLogger(__name__).error("Job %s failed [%s]: %s", job["id"], code, frames)
+            self.store.audit(job["id"], "processing_failed:" + code)
             # Do not forward arbitrary HTTP exception representations (URLs/headers) to the UI.
-            message = str(exc)[:1700] if isinstance(exc, (ValueError, NetSuiteError)) else "Processing failed; check local health and connectivity."
+            message = str(exc)[:1700] if isinstance(exc, (ValueError, NetSuiteError)) else f"Processing failed ({code}); check the local backend terminal for diagnostic locations."
             result = {"kind": "error", "message": message}
         if len(json.dumps(result, ensure_ascii=False).encode("utf-8")) > 90000:
             result = {"kind": "error", "message": "The answer exceeds the result storage limit. Select fewer fields or narrow the question."}
-        self.store.complete(job["id"], result)
+        self.store.complete(cache_id, result)
         self.store.audit(job["id"], result["kind"])
         return result

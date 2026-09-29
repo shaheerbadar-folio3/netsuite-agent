@@ -19,12 +19,28 @@ class Settings(BaseSettings):
     document_path: Path = Path("knowledge/business.md")
     data_dir: Path = Path("data")
     management_token: str = ""
-    poll_seconds: float = Field(5, ge=2)
+    poll_seconds: float = Field(2, ge=2)
     schema_refresh_seconds: int = Field(3600, ge=60)
-    inference_timeout: int = Field(180, ge=10, le=900)
+    # Full metadata rescan interval; routine refreshes only re-probe core/new/failed tables.
+    schema_full_refresh_seconds: int = Field(86400, ge=300)
+    schema_probe_batch_size: int = Field(12, ge=1, le=12)
+    schema_probe_concurrency: int = Field(2, ge=1, le=4)
+    # Comma-separated SuiteQL table names preferred on incremental refresh.
+    schema_core_tables: str = (
+        "customer,vendor,transaction,transactionline,item,employee,account,"
+        "subsidiary,contact,department,location,classification,currency,entity"
+    )
+    inference_timeout: int = Field(90, ge=10, le=900)
+    creation_inference_timeout: int = Field(90, ge=10, le=1800)
     retention_days: int = Field(7, ge=1, le=90)
     worker_id: str = "local-primary"
     max_attempts: int = Field(3, ge=1, le=3)
+    integration_role_id: str = ""
+    creation_enabled: bool = False
+    sdf_enabled: bool = False
+    sdf_auth_id: str = ""
+    suitecloud_bin: str = "suitecloud"
+    sdf_timeout: int = Field(120, ge=30, le=1800)
 
     @model_validator(mode="after")
     def endpoints(self):

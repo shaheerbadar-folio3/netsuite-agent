@@ -30,8 +30,30 @@ define(['N/file', 'N/runtime', 'N/cache', './lib'], (file, runtime, cache, lib) 
                 case 'ask': {
                     const question = String(body.question || '').trim();
                     if (!question || question.length > 6000) lib.fail('Enter a question of 1–6000 characters');
-                    if (body.parent) lib.owned(body.parent);
-                    result = {id: lib.enqueue({kind: 'ask', question, parent: body.parent || null})}; break;
+                    if (body.parent) {
+                        const previous = lib.owned(body.parent);
+                        if (lib.json(previous, 'result', {}).kind === 'draft' && lib.get(previous, 'state') === 'done') {
+                            lib.set(previous, 'state', 'superseded'); lib.save(previous);
+                        }
+                    }
+                    result = {id: lib.enqueue({kind: 'ask', question, mode: body.mode === 'create' ? 'create' : 'auto', parent: body.parent || null})}; break;
+                }
+                case 'approve': {
+                    const r = lib.owned(body.id), draft = lib.json(r, 'result', {}), request = lib.json(r, 'request', {});
+                    if (request.kind === 'execute' && request.approved_nonce === body.nonce) {
+                        result = {id: String(body.id)}; break;
+                    }
+                    if (lib.get(r, 'state') !== 'done' || draft.kind !== 'draft' || !body.nonce || draft.nonce !== body.nonce || draft.expires_at < Date.now())
+                        lib.fail('Draft changed, was rejected, or expired. Request a new draft.');
+                    request.kind = 'execute'; request.approved_nonce = draft.nonce;
+                    request.approved_by = String(runtime.getCurrentUser().id); request.approved_at = Date.now();
+                    lib.set(r, 'request', JSON.stringify(request));lib.set(r, 'state', 'pending');lib.save(r);
+                    result = {id: String(body.id)}; break;
+                }
+                case 'reject': {
+                    const r = lib.owned(body.id);
+                    if (lib.get(r, 'state') !== 'done' || lib.json(r, 'result', {}).kind !== 'draft') lib.fail('Draft is not awaiting approval');
+                    lib.set(r, 'state', 'cancelled');lib.save(r);result = {rejected: true};break;
                 }
                 case 'page': {
                     const source = lib.owned(body.source), answer = lib.json(source, 'result', {});
@@ -45,6 +67,7 @@ define(['N/file', 'N/runtime', 'N/cache', './lib'], (file, runtime, cache, lib) 
                 }
                 case 'cancel': {
                     const r = lib.owned(body.id);
+                    if (lib.json(r, 'request', {}).execution_started) lib.fail('Execution has started and cannot safely be cancelled. Wait for its result.');
                     if (['pending', 'running'].includes(lib.get(r, 'state'))) { lib.set(r, 'state', 'cancelled'); lib.save(r); }
                     result = {cancelled: lib.get(r, 'state') === 'cancelled'}; break;
                 }

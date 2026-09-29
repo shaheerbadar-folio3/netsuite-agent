@@ -5,9 +5,9 @@
 :root{font:15px/1.55 system-ui,sans-serif;color:#17332d;background:#f3f5f1;--green:#155e4a;--line:#dbe3dc}*{box-sizing:border-box}body{margin:0}header{border-bottom:1px solid var(--line);padding:20px 5%;display:flex;align-items:center;justify-content:space-between;background:#fff}h1{font-size:20px;margin:0}.tag{font-size:12px;background:#edf4ef;padding:5px 10px;border-radius:20px}main{max-width:1120px;margin:36px auto;padding:0 24px}.intro h2{font-size:32px;line-height:1.2;margin-bottom:10px}.muted{color:#65756e}#messages{display:grid;gap:18px;margin:28px 0}.message{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;overflow:hidden}.question{border-left:4px solid var(--green);white-space:pre-wrap}form{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}textarea{width:100%;resize:vertical;border:0;font:inherit;min-height:85px;outline-color:var(--green)}button{font:inherit;border:1px solid var(--line);border-radius:7px;padding:8px 16px;cursor:pointer;background:#fff;color:var(--green)}button.primary{background:var(--green);color:white;border-color:var(--green)}button:disabled{opacity:.45;cursor:default}.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.spacer{flex:1}.table-wrap{overflow:auto;margin:18px 0;max-height:560px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:10px 13px;max-width:420px;overflow-wrap:anywhere}th{background:#f3f5f1;position:sticky;top:0}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#f3f5f1;padding:12px}details{margin-top:12px}.error{color:#a33329}.meta{font-size:12px;color:#65756e;margin-top:12px}#live-status{min-height:24px;margin:10px 0}a{color:var(--green)}@media(max-width:600px){header{padding:16px}main{padding:0 14px}.intro h2{font-size:25px}}
 </style></head><body>
 <header><h1>NetSuite <span class="muted">/ Ask your data</span></h1><span class="tag" id="connection">Checking worker…</span></header>
-<main><section class="intro"><span class="tag">ADMINISTRATOR · READ-ONLY ANALYTICS</span><h2>Your business questions.<br>Answers from your records.</h2><p class="muted">Ask in plain language. Business definitions guide each query; NetSuite supplies the results.</p></section>
+<main><section class="intro"><span class="tag">ADMINISTRATOR · REVIEW BEFORE CREATION</span><h2>Your business questions.<br>Answers from your records.</h2><p class="muted">Ask in plain language. Business definitions guide each query; NetSuite supplies the results.</p></section>
 <div id="messages" aria-live="polite"></div><div id="live-status" role="status"></div>
-<form id="ask-form"><label for="question"><strong>Ask a question</strong></label><textarea id="question" maxlength="6000" placeholder="Which customers signed up last month?" required></textarea><div class="controls"><button class="primary" id="submit" type="submit">Ask NetSuite</button><button id="cancel" type="button" hidden>Cancel</button><span class="spacer"></span><button id="new" type="button">New conversation</button></div></form>
+<form id="ask-form"><label for="mode">Request type </label><select id="mode"><option value="auto">Automatic</option><option value="create">Create a record or custom type</option></select><br><label for="question"><strong>Your request</strong></label><textarea id="question" maxlength="6000" placeholder="Which customers signed up last month?" required></textarea><div class="controls"><button class="primary" id="submit" type="submit">Ask NetSuite</button><button id="cancel" type="button" hidden>Cancel</button><span class="spacer"></span><button id="new" type="button">New conversation</button></div></form>
 <p class="meta">AI inference runs on your configured private worker. Questions and result pages are stored temporarily in this NetSuite account and on the worker.</p></main>
 <script>
 (() => {
@@ -23,7 +23,42 @@ function persist(){sessionStorage.setItem(stateKey,JSON.stringify({parent,active
 function el(tag,text,cls){const n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);if(cls)n.className=cls;return n;}
 async function api(body){const response=await fetch(endpoint,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,csrf})});if(!response.ok)throw Error('NetSuite request failed');const data=await response.json();if(!data.ok)throw Error(data.error||'Request failed');return data;}
 function busy(value){submit.disabled=value;cancel.hidden=!value;document.getElementById('new').disabled=value;}
+function reviewTable(fields){
+ const table=el('table'), head=el('thead'), heading=el('tr');
+ ['Field','Value','Field ID'].forEach(v=>heading.append(el('th',v)));head.append(heading);table.append(head);
+ const body=el('tbody');
+ for(const [id,entry] of Object.entries(fields||{})){
+  const row=el('tr'),raw=entry.value===null?'—':typeof entry.value==='object'?JSON.stringify(entry.value):String(entry.value);
+  const value=entry.text && entry.text!==raw?`${entry.text} (value / ID: ${raw})`:raw;
+  row.append(el('td',entry.label||id),el('td',value),el('td',id));body.append(row);
+ }
+ table.append(body);const wrap=el('div',undefined,'table-wrap');wrap.append(table);return wrap;
+}
 function render(result,id){
+ if(result.kind==='draft'){
+  const box=el('article',undefined,'message');box.append(el('strong','Review before creation'),el('p',result.message));
+  if(result.operation==='record'){
+   box.append(el('p','Record type: '+result.record_type),reviewTable(result.preview.fields));
+   for(const [name,lines] of Object.entries(result.preview.sublists||{}))lines.forEach((line,i)=>box.append(el('strong',`${name} · line ${i+1}`),reviewTable(line)));
+  }else{
+   const spec=result.specification;box.append(el('p',`${spec.name} · ${spec.script_id}`),el('p',spec.description||''),el('p','Permissions: Administrator FULL only.'));
+   const fields={};for(const field of spec.fields||[])fields[field.script_id]={label:field.label,value:field.field_type+(field.mandatory?' · required':' · optional')};
+   box.append(el('p','Include Name field: '+(spec.include_name?'Yes':'No')),reviewTable(fields));
+  }
+  box.append(el('p','Approval expires '+new Date(result.expires_at).toLocaleString(),'meta'));
+  if(result.xml){const d=el('details');d.append(el('summary','Exact customization XML'),el('pre',result.xml));box.append(d);}
+  const approve=el('button',result.operation==='custom_type'?'Approve and deploy type':'Approve and create','primary');
+  const reject=el('button','Reject draft');
+  approve.onclick=async()=>{if(active)return;approve.disabled=true;reject.disabled=true;try{const response=await api({action:'approve',id,nonce:result.nonce});active=response.id;persist();await poll();}catch(e){status.textContent=e.message;approve.disabled=false;reject.disabled=false;}};
+  reject.onclick=async()=>{try{await api({action:'reject',id});approve.disabled=true;reject.disabled=true;box.append(el('p','Draft rejected. Nothing was created.'));}catch(e){status.textContent=e.message;}};
+  box.append(approve,reject,el('p','To change this draft, send the correction below. The earlier draft will be invalidated.','meta'));messages.append(box);return;
+ }
+ if(result.kind==='created'||result.kind==='uncertain'){
+  const box=el('article',undefined,'message');box.append(el('strong',result.kind==='created'?'Creation completed':'Execution needs verification'),el('p',result.message));
+  if(typeof result.link==='string'&&result.link.startsWith('/app/')){const a=el('a','Open created record');a.href=result.link;a.target='_blank';a.rel='noopener noreferrer';box.append(a);}
+  messages.append(box);return;
+ }
+
  const box=el('article',undefined,'message');
  if(result.kind!=='result'){box.append(el('strong',result.kind==='clarify'?'A clarification is needed':result.kind==='error'?'Unable to complete this query':'Query unavailable'));box.append(el('p',result.message,result.kind==='error'?'error':''));messages.append(box);return;}
  box.append(el('strong',result.total===0?'No matching records':`${result.total.toLocaleString()} result ${result.total===1?'row':'rows'}`),el('p',result.interpretation));
@@ -38,13 +73,13 @@ function render(result,id){
  box.append(el('p',result.notice||'Results can change between pages.','meta'));
  const details=el('details');details.append(el('summary','Query and verification details'),el('pre',result.sql),el('p',`Queried ${result.queried_at} · Document ${result.document_version} · Schema ${result.schema_version}`,'meta'));box.append(details);messages.append(box);
 }
-async function poll(){if(polling||!active)return;polling=true;busy(true);try{while(active){const id=active;const data=await api({action:'status',id});if(active!==id)break;if(data.state==='done'){render(data.result,id);parent=id;active=null;persist();status.textContent='';break;}if(data.state==='cancelled'){active=null;persist();status.textContent='Question cancelled.';break;}status.textContent=data.state==='running'?'Reading definitions and querying NetSuite…':'Queued. Keep the local worker running to receive an answer.';await new Promise(r=>setTimeout(r,3000));}}catch(e){status.textContent=e.message+' Reload this page to reconnect to the pending question.';}finally{polling=false;busy(Boolean(active));}}
+async function poll(){if(polling||!active)return;polling=true;busy(true);try{while(active){const id=active;const data=await api({action:'status',id});if(active!==id)break;if(data.state==='done'){render(data.result,id);parent=id;active=null;persist();status.textContent='';break;}if(data.state==='cancelled'||data.state==='superseded'){active=null;persist();status.textContent='Question cancelled.';break;}status.textContent=data.state==='running'?'Processing your request in NetSuite…':'Queued. Keep the local worker running to receive an answer.';await new Promise(r=>setTimeout(r,1000));}}catch(e){status.textContent=e.message+' Reload this page to reconnect to the pending question.';}finally{polling=false;busy(Boolean(active));}}
 async function startPage(source,page){if(active)return;try{busy(true);const data=await api({action:'page',source,page});active=data.id;persist();await poll();}catch(e){status.textContent=e.message;busy(false);}}
-document.getElementById('ask-form').onsubmit=async e=>{e.preventDefault();if(active)return;const input=document.getElementById('question'),question=input.value.trim();if(!question)return;busy(true);try{const data=await api({action:'ask',question,parent});messages.append(el('article',question,'message question'));input.value='';active=data.id;persist();await poll();}catch(e){status.textContent=e.message;busy(false);}};
+document.getElementById('ask-form').onsubmit=async e=>{e.preventDefault();if(active)return;const input=document.getElementById('question'),question=input.value.trim();if(!question)return;busy(true);try{const data=await api({action:'ask',question,parent,mode:document.getElementById('mode').value});messages.append(el('article',question,'message question'));input.value='';active=data.id;persist();await poll();}catch(e){status.textContent=e.message;busy(false);}};
 cancel.onclick=async()=>{if(!active)return;try{await api({action:'cancel',id:active});}catch(e){status.textContent=e.message;}};
 document.getElementById('new').onclick=()=>{parent=null;messages.replaceChildren();persist();status.textContent='';};
 async function health(){try{const h=await api({action:'health'});document.getElementById('connection').textContent=h.online?'Worker connected':'Worker offline or initializing';}catch{document.getElementById('connection').textContent='Connection unavailable';}}
 health();setInterval(health,30000);
-if(active)poll();else if(parent)api({action:'status',id:parent}).then(d=>{if(d.result)render(d.result,parent);}).catch(()=>{parent=null;persist();});
+if(active)poll();else if(parent)api({action:'status',id:parent}).then(d=>{if(d.result && d.state==='done')render(d.result,parent);}).catch(()=>{parent=null;persist();});
 })();
 </script></body></html>

@@ -7,10 +7,18 @@ const server=http.createServer((req,res)=>{
  let body='';req.on('data',chunk=>{body+=chunk;if(body.length>20000)req.destroy();});
  req.on('end',()=>{try{
   h.admin();const data=h.ui(body?JSON.parse(body):{},req.method);
-  if(req.method==='GET')data.body=data.body.replace('ADMINISTRATOR · READ-ONLY ANALYTICS','LOCAL TEST FIXTURE · SYNTHETIC DATA');
+  if(req.method==='GET')data.body=data.body.replace('ADMINISTRATOR · REVIEW BEFORE CREATION','LOCAL TEST FIXTURE · SYNTHETIC DATA');
   res.writeHead(200,data.headers);res.end(typeof data.body==='string'?data.body:JSON.stringify(data.body));
-  if(req.method==='POST' && ['ask','page'].includes(JSON.parse(body).action))setTimeout(()=>{
+  if(req.method==='POST' && ['ask','page','approve'].includes(JSON.parse(body).action))setTimeout(()=>{
    const {job}=h.api('claim');if(!job)return;
+   if(job.request.kind==='execute'){
+    const result=h.api('creation_execute',{job:job.id,lease:job.lease}).result;
+    h.api('complete',{job:job.id,lease:job.lease,result});return;
+   }
+   if(job.request.mode==='create'){
+    const result=h.api('creation_prepare',{job:job.id,lease:job.lease,record_type:'customer',payload:{fields:{companyname:'Synthetic review customer'}}}).result;
+    h.api('complete',{job:job.id,lease:job.lease,result});return;
+   }
    const sql='SELECT id, companyname FROM customer ORDER BY id';
    const result=h.api('query',{job:job.id,lease:job.lease,sql,page:0,record_links:[{column:'id',record_type:'customer'}]}).result;
    h.api('complete',{job:job.id,lease:job.lease,result:{kind:'result',...result,sql,interpretation:'All customers (synthetic UI test).',definitions:['Customers means customer records'],schema_version:'fixture',document_version:'fixture',queried_at:new Date().toISOString()}});

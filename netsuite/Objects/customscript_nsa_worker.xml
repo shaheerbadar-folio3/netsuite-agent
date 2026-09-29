@@ -3,6 +3,7 @@
   <scriptfile>[/SuiteScripts/netsuite-agent/worker_restlet.js]</scriptfile>
   <notifyowner>F</notifyowner>
   <scriptcustomfields>
+    <scriptcustomfield scriptid="custscript_nsa_creation_enabled"><label>Enable approved business creation</label><fieldtype>CHECKBOX</fieldtype></scriptcustomfield>
     <scriptcustomfield scriptid="custscript_nsa_worker_role"><label>Integration role internal ID</label><fieldtype>INTEGER</fieldtype></scriptcustomfield>
     <scriptcustomfield scriptid="custscript_nsa_worker_user"><label>Integration user internal ID</label><fieldtype>INTEGER</fieldtype></scriptcustomfield>
     <scriptcustomfield scriptid="custscript_nsa_worker_name"><label>Worker identity</label><fieldtype>TEXT</fieldtype></scriptcustomfield>

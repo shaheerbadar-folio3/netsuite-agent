@@ -155,14 +155,18 @@ No separate embedding model or vector database is required.
 .venv/bin/netsuite-agent serve
 ```
 
-The worker discovers the schema before claiming questions. Full initial discovery can take
-several minutes and uses NetSuite governance. It enumerates documented N/query types and
-custom record script IDs, then probes metadata in batches of six. If SQL-string Column
-objects are unavailable, a null-extended join attempts to discover mapped field names
-without extracting business rows, including for empty tables. **Both paths require live
-verification in your account.** Unsupported record types are reported as failed; they are
-never silently fabricated. The previous snapshot survives a complete refresh failure and
-queries fail closed once it becomes stale.
+The worker discovers the schema before claiming questions. The first cold-start discovery
+still walks the full inventory (documented N/query types and custom record script IDs) and
+probes metadata in batches of up to twelve, with limited concurrency. Later refreshes are
+incremental: they reuse the last good snapshot, re-probe configured core tables plus newly
+appeared or previously failed names, and only run a full rescan on
+`AGENT_SCHEMA_FULL_REFRESH_SECONDS` (default 24h) or `POST /schema/refresh?full=true`.
+When a usable snapshot already exists, refresh runs in the background so the worker keeps
+polling jobs. If SQL-string Column objects are unavailable, a null-extended join attempts
+to discover mapped field names without extracting business rows, including for empty
+tables. **Both paths require live verification in your account.** Unsupported record types
+are reported as failed; they are never silently fabricated. The previous snapshot survives
+a complete refresh failure and queries fail closed once it becomes stale.
 
 View readiness without placing the bearer token in shell history:
 
@@ -210,3 +214,9 @@ server loopback. Set private-key file permissions so the unprivileged container 
 Docker/user-namespace mappings may require adjusting ownership. The sample compose setup
 uses CPU inference; GPU configuration is hardware-specific. Pin and verify the Ollama
 image version during deployment rather than relying on a floating tag.
+
+## Optional approved creation
+
+After query setup, follow [CREATION_SETUP.md](CREATION_SETUP.md) to deploy the updated
+creation scripts, grant write permissions, enable the two creation switches, and configure
+separate SDF authentication for creating new custom record types.

@@ -34,3 +34,34 @@ async def test_cancellation_stops_inference_and_never_publishes(settings, store)
     worker.heartbeat = cancelled
     await worker.process_job({'id':'1'})
     assert finished.is_set()
+
+
+async def test_schema_refresh_is_background_when_snapshot_exists(settings, store):
+    started = asyncio.Event()
+    release = asyncio.Event()
+    claims = []
+
+    class NS:
+        async def call(self, action, **kwargs):
+            if action == 'schema_inventory':
+                started.set()
+                await release.wait()
+                return {'tables': ['customer']}
+            if action == 'schema_probe':
+                return {'tables': [{'name': 'customer', 'fields': [{'name': 'id'}]}], 'failures': []}
+            if action == 'claim':
+                claims.append(True)
+                return {}
+            raise AssertionError(action)
+
+    worker = Worker(settings, store, NS(), None)
+    worker.refresh_requested = True
+    task = asyncio.create_task(worker.run())
+    await asyncio.wait_for(started.wait(), timeout=2)
+    # Worker must keep polling while the slow refresh is in flight.
+    await asyncio.sleep(settings.poll_seconds + 0.2)
+    assert claims, 'expected claim while schema refresh runs in background'
+    release.set()
+    worker.stop.set()
+    await asyncio.wait_for(task, timeout=2)
+    assert store.get('schema_status', {}).get('ok') is True

@@ -70,11 +70,15 @@ def create_app(settings=None):
         except ValueError as exc:
             knowledge = {"ready": False, "error": str(exc)}
         return {"worker": app.state.worker.status, "schema": app.state.store.get("schema_status"),
-                "model": model, "knowledge": knowledge}
+                "model": model, "knowledge": knowledge,
+                "creation": {"enabled": s.creation_enabled, "sdf_enabled": s.sdf_enabled,
+                             "sdf_auth_configured": bool(s.sdf_auth_id)}}
 
     @app.post("/schema/refresh", dependencies=[Depends(authorized)])
-    async def schema_refresh():
+    async def schema_refresh(full: bool = False):
         app.state.worker.refresh_requested = True
-        return {"scheduled": True}
+        if full:
+            app.state.worker.refresh_full = True
+        return {"scheduled": True, "full": bool(full)}
 
     return app

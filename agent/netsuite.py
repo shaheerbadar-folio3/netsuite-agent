@@ -58,7 +58,9 @@ class NetSuite:
         if not isinstance(body, dict) or not body.get("ok"):
             error = body.get("error", {}) if isinstance(body, dict) else {}
             # Only query errors are supplied to model repair, never HTTP bodies or credentials.
-            raise NetSuiteError(str(error.get("message", "NetSuite operation failed"))[:1500])
+            message = str(error.get("message", "NetSuite operation failed"))[:1500]
+            code = str(error.get("code", "ERROR"))[:100]
+            raise NetSuiteError(f"{action} [{code}]: {message}")
         return body
 
     async def close(self):

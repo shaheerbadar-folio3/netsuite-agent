@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class Plan(BaseModel):
-    kind: Literal["query", "clarify", "unsupported"]
+    kind: Literal["query", "clarify", "unsupported", "create"]
     explanation: str = Field(max_length=2000)
     sql: str = Field(default="", max_length=16000)
     definitions: list[str] = Field(default_factory=list, max_length=12)
